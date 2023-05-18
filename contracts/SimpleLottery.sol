@@ -2,14 +2,15 @@
 
 pragma solidity ^0.8.18;
 
-import "@chainlink/contracts/src/v0.8/inteerfaces/AggregatorV3Interface.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 import "./WinningNumbers.sol";
 import "./EthPrice.sol";
 
-contract LuckyWinnerV1 is AggregatorV3Interface {
+contract LuckyWinnerV1 {
+    address public owner;
     uint public totalRound = 1; /////////////////////////TOTALROUNDS///////////////////////
     address payable[] public players; ////////////////////////PLAYERS////////////////////////////
 
@@ -19,11 +20,12 @@ contract LuckyWinnerV1 is AggregatorV3Interface {
     uint public stake = 0.01 ether; ///////////////////////Lottery Stake////////////////////////
 
     //////////CONTRACT INSTANCE/////////////
-    WinningNumbers immutable winningNumbers;
+    VRFv2Consumer immutable winningNumbers;
     AggregatorV3Interface internal priceFeed;
 
     constructor(address _winningNumbers) {
         owner = msg.sender;
+        winningNumbers = VRFv2Consumer(_winningNumbers);
         priceFeed = AggregatorV3Interface(
             0x694AA1769357215DE4FAC081bf1f309aDC325306
         );
@@ -38,14 +40,14 @@ contract LuckyWinnerV1 is AggregatorV3Interface {
         require(players.length < 10, "Max Players");
         require(msg.value >= stake, "Low Stake");
         prizePool += msg.value;
-        players.push(msg.sender);
+        players.push(payable(msg.sender));
     }
 
     function getRoundBalance() public view returns (uint) {
         return prizePool;
     }
 
-    function getWinner() public view onlyOwner returns (address) {
+    function getWinner() public onlyOwner returns (address) {
         require(players.length >= 3, "Minimum of Three players Required");
         uint256 randomNumbers = winningNumbers.requestRandomWords();
         uint winningIndex = randomNumbers % players.length;
@@ -55,9 +57,8 @@ contract LuckyWinnerV1 is AggregatorV3Interface {
     }
 
     function payWinner() external onlyOwner {
-        (bool success, ) = roundToWinner[totalRound].call({value: prizePool})(
-            ""
-        );
+        uint prize = prizePool;
+        (bool success, ) = roundToWinner[totalRound].call{value: prize}("");
         require(success, "Transfer Failed");
         players = new address payable[](0); //reset array
         totalRound += 1; //next round
