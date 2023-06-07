@@ -118,20 +118,20 @@ export const LuckyWinnerProvider = ({ children }) => {
 
   const PRIVATEKEY = process.env.PRIVATE_KEY;
 
-  const payWinner = async () => {
-    console.log("paying....");
-    if (roundPlayers == 3) {
-    }
-    const winner = await luckyWinnerV1Instance.getWinner({ gasLimit: 200000 });
-    console.log(winner);
-    const prize = await luckyWinnerV1Instance.prizePool();
-    console.log(prize);
-    const transaction = await luckyWinnerV1Instance.payWinner({
-      gasLimit: 100000,
-    });
-    const txResponse = await transaction.wait();
-    //const wallet = new Wallet(PRIVATEKEY);
-  };
+  // const payWinner = async () => {
+  //   console.log("paying....");
+  //   if (roundPlayers == 3) {
+  //   }
+  //   const winner = await luckyWinnerV1Instance.getWinner({ gasLimit: 200000 });
+  //   console.log(winner);
+  //   const prize = await luckyWinnerV1Instance.prizePool();
+  //   console.log(prize);
+  //   const transaction = await luckyWinnerV1Instance.payWinner({
+  //     gasLimit: 100000,
+  //   });
+  //   const txResponse = await transaction.wait();
+  //   //const wallet = new Wallet(PRIVATEKEY);
+  // };
 
   //
 
