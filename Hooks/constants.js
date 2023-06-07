@@ -1,5 +1,5 @@
 import LuckyWinnerV1 from "../artifacts/contracts/LuckyWinnerV1.sol/LuckyWinnerV1.json";
-//import LuckyNumbers from "../artifacts/contracts/WinningNumbers.sol/VRFv2Consumer.json";
+import LuckyNumbers from "../artifacts/contracts/WinningNumbers.sol/VRFv2Consumer.json";
 
 export const LuckyWinnerV1Address =
   "0x36EcABa94DcCC8D71B4A99b90764f81E56cCd7EF";
