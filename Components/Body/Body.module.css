@@ -29,6 +29,11 @@
     background-color: rgb(174, 163, 225);
 }
 
+.Body_box_left_players{
+    max-height: 14rem;
+    overflow-y: scroll;
+}
+
 .Body_box_left h2{
     font-size: 2rem;
     margin: 2rem 0;
@@ -43,6 +48,11 @@
     justify-content: space-between;
 }
 
+.Body_box_right{
+    max-height: 14rem;
+    overflow-y: scroll;
+}
+
 .Body_box_right h3{
     cursor: pointer;
     background-color: rgb(101, 99, 99);
@@ -54,11 +64,13 @@
 }
  
 .Body_box_down{
-    background-color: rgb(101, 99, 99);
+    /* background-color: rgb(101, 99, 99); */
     padding: 2rem;
     border-radius: 1rem;
     line-height: 2;
     justify-content: center;
+    max-height: 30rem;
+    box-shadow: 2px 2px 4px 8px rgb(101, 99, 99);
 }
 
 

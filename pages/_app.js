@@ -7,6 +7,7 @@ import "@rainbow-me/rainbowkit/styles.css";
 //import { VotingSystemProvider } from "@/Hooks/client";
 
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import { LuckyWinnerProvider } from "@/Hooks/Integrations";
 
 const { chains, provider, webSocketProvider } = configureChains(
   [mainnet, polygon, optimism, arbitrum, goerli, sepolia],
@@ -28,7 +29,9 @@ export default function App({ Component, pageProps }) {
   return (
     <WagmiConfig client={client}>
       <RainbowKitProvider chains={chains} modalSize="compact">
-        <Component {...pageProps} />
+        <LuckyWinnerProvider>
+          <Component {...pageProps} />
+        </LuckyWinnerProvider>
       </RainbowKitProvider>
     </WagmiConfig>
   );

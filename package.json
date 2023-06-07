@@ -11,12 +11,14 @@
   "dependencies": {
     "@chainlink/contracts": "^0.6.1",
     "@rainbow-me/rainbowkit": "^0.12.7",
+    "alchemy-sdk": "^2.8.1",
+    "dotenv": "^16.0.3",
     "ethers": "^5.7.2",
     "next": "13.4.1",
     "react": "18.2.0",
+    "react-dom": "18.2.0",
     "react-icons": "^4.8.0",
-    "wagmi": "^0.12.11",
-    "react-dom": "18.2.0"
+    "wagmi": "^0.12.11"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^2.0.0",

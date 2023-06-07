@@ -2,7 +2,7 @@
 .Footer {
     width: 100%;
     margin-top: 2rem;
-    background-color: rgb(215, 201, 201);
+    background-color: rgb(9, 9, 9);
     
 }
 
@@ -24,6 +24,6 @@
 .Footer_box_icon {
     margin: 2rem;
     font-size: 1rem;
-    color: rgb(53, 49, 49);
+    color: rgb(255, 255, 255);
     border-bottom: solid 2px rgb(8, 7, 7);
 }

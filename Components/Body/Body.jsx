@@ -1,15 +1,19 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Image from "next/image";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 import Style from "./Body.module.css";
+import { LuckyWinnerContext } from "@/Hooks/Integrations";
 //import img1 from "../../public/img1.jpg";
 
 const Body = () => {
+  const { play, balance, ethBalance, roundPlayers, prevWinners, payWinner } =
+    useContext(LuckyWinnerContext);
   const [showPlayers, setShowPlayers] = useState(false);
   const [showWinners, setShowWinners] = useState(false);
 
   const openPlayers = () => {
+    console.log("Open", roundPlayers);
     if (!showPlayers) {
       setShowPlayers(true);
     } else {
@@ -25,8 +29,8 @@ const Body = () => {
     }
   };
 
-  const winnersArray = [1, 2, 3];
-  const playersArray = [1, 2, 3];
+  const winnersArray = prevWinners;
+  const playersArray = roundPlayers;
   return (
     <div className={Style.Body}>
       <div className={Style.Body_box}>
@@ -50,21 +54,30 @@ const Body = () => {
         <div className={Style.Body_box_left}>
           <div className={Style.Body_box_left}>
             <div>
-              <button className={Style.Body_box_left_btn}>Play</button>
+              <button
+                className={Style.Body_box_left_btn}
+                onClick={() => play()}
+              >
+                Play
+              </button>
               <p>Play with 0.01 Eth</p>
             </div>
-            <h2>Pot Balance: 0.043 ETH</h2>
+            <h2>Pot Balance: {balance} ETH</h2>
             <div className={Style.Body_box_left_players}>
               <h3 onClick={openPlayers}>
                 Round Players{" "}
                 {/* {showPlayers ? <IoIosArrowUp /> : <IoIosArrowDown />}{" "} */}
               </h3>
               {showPlayers &&
-                playersArray.map((el, i) => (
-                  <p key={i + 1}>
-                    {i + 1}. 898fs8df9dffu9sdfd8f8fs9dffsdf9sdj90su
-                  </p>
-                ))}
+                playersArray.map((el, i) =>
+                  playersArray.length > 1 ? (
+                    <p key={i + 1}>
+                      {i + 1}. {el}
+                    </p>
+                  ) : (
+                    <p>No Playey yet</p>
+                  )
+                )}
             </div>
             <div className={Style.Body_box_right}>
               <h3 onClick={openWinners}>
@@ -80,12 +93,16 @@ const Body = () => {
                     i={i}
                   >
                     <p>Round {i + 1} </p>
-                    <p>
-                      Winning Address: slfdkg98df9g8dfgfdj9jsdjf0909ufdssd09df
-                    </p>
+                    <p>Winning Address: {el}</p>
                   </div>
                 ))}
             </div>
+            <button
+              className={Style.Body_box_left_btn}
+              onClick={() => payWinner()}
+            >
+              Pick WInner
+            </button>
           </div>
         </div>
       </div>

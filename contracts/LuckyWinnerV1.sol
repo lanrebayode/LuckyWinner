@@ -2,44 +2,35 @@
 
 pragma solidity ^0.8.18;
 
-import "@chainlink/contracts/src/v0.8/inteerfaces/AggregatorV3Interface.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 import "./WinningNumbers.sol";
 import "./EthPrice.sol";
 
-
-contract LuckyWinnerV1 is AggregatorV3Interface {
-
-    uint public totalRounds;
-
-    struct Round{
-        uint startTime;
-        uint endTime;
-        uint[] winningNumbers;
-        uint totalWinners;
-        uint totalWonEther;
-        uint totalEtherPaidEther;
-    }
-
-    mapping(uint => Round) public roundsToId; //round-Id-RoundDetails
-
+contract LuckyWinnerV1 {
     address public owner;
-    mapping(uint => address[]) public roundIdToPlayers; //round-to-playersAddress
-    mapping(uint => mapping(address => uint[])) public roundIdToAddressGame; //Number played by each address for a specific round
-    mapping (uint => uint[]) public roundIdToWinningNumbers; //round winning numbers
-    mapping(uint => mapping(address => uint)) public addressPrizeInRound; //Amount won by each addreess for each round 
-    mapping(uint => address) public roundWinner;
+    uint public totalRound = 1; /////////////////////////TOTALROUNDS///////////////////////
+    uint public totalEthPaidOut;
+    address payable[] public players; ////////////////////////PLAYERS////////////////////////////
 
-    uint public gamingFee; //base gamingFee
-    uint public minimunStake = 0.0005 ether; //base min-stake
+    uint public prizePool; //////////////////////////PRIZE POOL//////////////////////////
+    mapping(uint => address) public roundToWinner; //ROUNDWINNERS////////////////////////
 
-    WinningNumber immutable winningNumber;
-    EthPrice immutable ethPrice;
+    uint public stake = 0.01 ether; ///////////////////////Lottery Stake////////////////////////
+    mapping(uint => mapping(address => bool)) public playedInRound;
 
-    constructor(address _winningNumbers, address _ethPrice) payable{
+    //////////CONTRACT INSTANCE/////////////
+    VRFv2Consumer immutable winningNumbers;
+    AggregatorV3Interface internal priceFeed;
+
+    constructor(address _winningNumbers) {
         owner = msg.sender;
+        winningNumbers = VRFv2Consumer(_winningNumbers);
+        priceFeed = AggregatorV3Interface(
+            0x694AA1769357215DE4FAC081bf1f309aDC325306
+        );
     }
 
     modifier onlyOwner() {
@@ -47,37 +38,46 @@ contract LuckyWinnerV1 is AggregatorV3Interface {
         _;
     }
 
-    //Getting round data to Memory to save gas instead of reding directly fromthe state
-    function getRoundData(uint _id) public view 
-    returns(
-        uint _startTime, 
-        uint _endtIime, 
-        uint[] memory _winningNumbers, 
-        uint _totalWinners, 
-        uint _totalWonEther, 
-        uint _totalPaidEther
-        ) {
-        Round memory round = roundsToId[_id];
-        _startTime = round.startTime;
-        _endtIime = round.endTime;
-        _winningNumbers = round.winningNumbers;
-        _totalWinners = round.totalWinners;
-        _totalWonEther = round.totalWonEther;
-        _totalPaidEther = round.totalEtherPaidEther; 
-
-        return (_startTime, _endtIime, _winningNumbers, _totalWinners, _totalWonEther, _totalPaidEther); 
+    function play() public payable {
+        require(players.length < 10, "Max Players");
+        require(msg.value == stake, "Incorrect Stake");
+        require(!playedInRound[totalRound][msg.sender], "Not Allowed");
+        prizePool += msg.value;
+        players.push(payable(msg.sender));
     }
 
-    function startGame() public onlyOwner() {
-        latestRound = totalRounds + 1;
-        roundsToId[latestRound].startTime = block.timestamp;
-        roundIdTo[latestRound].endTime = roundsToId[latestRound].startTime + 3600; //One Hour Game Time
-        totalRounds += 1;
+    function getRoundBalance() public view returns (uint) {
+        return prizePool;
     }
 
-    function play(uint[] memory _playingNumbers, uint _stakeAmount) public payable {
-        require(_playingNumbers.length >= 2, "Incomple game");
-        require(_playingNumbers.length <= 5, "Overfloating game");
-        addressToPlayNumberToRound[]
+    function getWinner() public returns (address) {
+        require(players.length >= 3, "Minimum of Three players Required");
+        uint256 randomNumbers = winningNumbers.requestRandomWords();
+        uint winningIndex = randomNumbers % players.length;
+        address winner = players[winningIndex];
+        roundToWinner[totalRound] = winner;
+        return winner;
+    }
+
+    function payWinner() external {
+        require(players.length >= 3, "Minimum of Three players Required");
+        uint prize = stake * players.length;
+        address winner = roundToWinner[totalRound];
+        require(winner != address(0), "Unauthorized Address(0) Transfer");
+        prizePool -= prize;
+        totalEthPaidOut += prize;
+        (bool success, ) = winner.call{value: prize}("");
+        require(success, "Transfer Failed");
+        players = new address payable[](0); //reset array
+        totalRound += 1; //next round
+    }
+
+    function getLatestEthPrice() public view returns (int) {
+        (, int price, , , ) = priceFeed.latestRoundData();
+        return price;
+    }
+
+    function getPlayersLength() public view returns (uint) {
+        return players.length;
     }
 }
