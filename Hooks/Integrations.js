@@ -21,8 +21,8 @@ export const LuckyWinnerProvider = ({ children }) => {
   const [roundPlayers, setRoundPlayers] = useState([]);
   const [ethPrice, setEthPrice] = useState();
   const [prevWinners, setPrevWinners] = useState([]);
+  const [totalEthPaidOut, setTotalEthPaidOut] = useState();
 
-  const [contract2, setContract2] = useState();
   let provider;
 
   const connectWallet = async () => {
@@ -35,12 +35,6 @@ export const LuckyWinnerProvider = ({ children }) => {
         LuckyWinnerV1ABI,
         signer
       );
-      const contract22 = new ethers.Contract(
-        VrfAddress,
-        LuckyNumbersV1ABI,
-        signer
-      );
-      setContract2(contract22);
       setLuckyWinnerV1Instance(contract);
 
       console.log("contract instance:", contract);
@@ -80,6 +74,12 @@ export const LuckyWinnerProvider = ({ children }) => {
           }
         }
         setPrevWinners(winnersArray);
+
+        ////////////////////// Total Paid Eth //////////////////////////////////////
+        const totalPaidEth = await contract.totalEthPaidOut();
+        const amount = ethers.utils.formatEther(totalPaidEth);
+        console.log(amount);
+        setTotalEthPaidOut(amount);
       }
     } catch (error) {
       console.log("Error while loading connecting", error);
@@ -152,6 +152,7 @@ export const LuckyWinnerProvider = ({ children }) => {
         ethPrice,
         roundPlayers,
         prevWinners,
+        totalEthPaidOut,
       }}
     >
       {children}

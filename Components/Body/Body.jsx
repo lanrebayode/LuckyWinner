@@ -7,8 +7,15 @@ import { LuckyWinnerContext } from "@/Hooks/Integrations";
 //import img1 from "../../public/img1.jpg";
 
 const Body = () => {
-  const { play, balance, ethBalance, roundPlayers, prevWinners, payWinner } =
-    useContext(LuckyWinnerContext);
+  const {
+    play,
+    balance,
+    ethBalance,
+    roundPlayers,
+    prevWinners,
+    payWinner,
+    totalEthPaidOut,
+  } = useContext(LuckyWinnerContext);
   const [showPlayers, setShowPlayers] = useState(false);
   const [showWinners, setShowWinners] = useState(false);
 
@@ -48,7 +55,9 @@ const Body = () => {
             a winner is selected using a provably fair algorithm. LuckyWInner
             provides a user-friendly interface to track rounds and previous
             winners. It ensures security, transparency, and eliminates the need
-            for intermediaries.
+            for intermediaries. A total of{" "}
+            <strong className={Style.paidEth}>{totalEthPaidOut}Eth</strong> has
+            been paid out.
           </p>
         </div>
         <div className={Style.Body_box_left}>
@@ -75,7 +84,7 @@ const Body = () => {
                       {i + 1}. {el}
                     </p>
                   ) : (
-                    <p>No Playey yet</p>
+                    <p>No Players yet</p>
                   )
                 )}
             </div>

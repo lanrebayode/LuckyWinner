@@ -5,6 +5,7 @@ import { ethers } from "ethers";
 
 import Style from "./NavBar.module.css";
 import ethImg from "../../public/ether.png";
+import logo from "../../public/luckyLogo1.jpg";
 import { LuckyWinnerContext } from "@/Hooks/Integrations";
 
 const NavBar = () => {
@@ -13,6 +14,13 @@ const NavBar = () => {
     <div className={Style.NavBar}>
       <div className={Style.NavBar_box}>
         <div className={Style.NavBar_box_title}>
+          <Image
+            className={Style.NavBar_box_title_img}
+            src={logo}
+            alt="luck-logo"
+            width={70}
+            height={70}
+          />
           <h1>LuckyWinner</h1>
           {/* <Image src={} alt='logo' width={50} height={50} /> */}
         </div>
@@ -22,13 +30,16 @@ const NavBar = () => {
             className={Style.NavBar_box_ethPrice_img}
             src={ethImg}
             alt="eth-logo"
-            width={40}
-            height={40}
+            width={50}
+            height={50}
           />
           <p> {ethPrice ? `$${ethPrice}` : "--"} </p>
         </div>
 
-        <div className={Style.NavBar_box_wallet}>
+        <div
+          className={Style.NavBar_box_wallet}
+          onClick={() => connectWallet()}
+        >
           <ConnectButton
             showBalance={{
               smallScreen: false,
@@ -38,7 +49,6 @@ const NavBar = () => {
               smallScreen: "avatar",
               largeScreen: "full",
             }}
-            //  onClick={connectWallet()}
           />
         </div>
       </div>
