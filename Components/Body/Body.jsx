@@ -55,9 +55,19 @@ const Body = () => {
             a winner is selected using a provably fair algorithm. LuckyWInner
             provides a user-friendly interface to track rounds and previous
             winners. It ensures security, transparency, and eliminates the need
-            for intermediaries. A total of{" "}
-            <strong className={Style.paidEth}>{totalEthPaidOut}Eth</strong> has
-            been paid out.
+            for intermediaries.{" "}
+            {totalEthPaidOut ? (
+              <p>
+                {" "}
+                A total of{" "}
+                <strong className={Style.paidEth}>
+                  {totalEthPaidOut}Eth
+                </strong>{" "}
+                has been paid out.
+              </p>
+            ) : (
+              ""
+            )}
           </p>
         </div>
         <div className={Style.Body_box_left}>
